@@ -135,7 +135,8 @@ main(int argc, char *argv[])
   x_ptr->upload(location_jv);
   GPS_DD my_local_answer = my_local_ptgr.question(jvt_question);
   std::cout << *(my_local_answer.dump2JSON()) << std::endl;
-
+  
+  
   // now proxy object (Real object at URL)
   Shadow_Record shadow_object_1001;
   shadow_object_1001.host_url = "http://localhost:8300";
@@ -145,9 +146,10 @@ main(int argc, char *argv[])
   x_ptr->upload(location_jv);
   GPS_DD my_remote_answer = shadow_object_1001.question(jvt_question);
   std::cout << *(my_remote_answer.dump2JSON()) << std::endl;
+  
 
   // now trying the overloaded pointer operator under Shadow
-  std::cout << "number of elements is " << (shadow_object_1001->traces).size()
+  std::cout << "number of elements is " << (shadow_object_1001.traces).size()
 	    << ".\n";
   return 0;
 }

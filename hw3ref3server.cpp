@@ -83,6 +83,7 @@ myhw3ref3Server::upload
 
       Json::Value my_jv = location_jv;
       ptgr_ptr->JSON2Object(&my_jv);
+      
 
       TL_Sort(ptgr_ptr->traces);
       std::vector<Timed_Location> * unique_ptr = NULL;
@@ -141,13 +142,16 @@ myhw3ref3Server::question
       ((question_jv["time"]["time"]).isString() == true))
     {
       jvt_s = (question_jv["time"]["time"]).asString();
+      
     }
+    
   else
     {
       std::cout << "question JSON content error" << std::endl;
       result["status"] = "failed";
       return result;
     }
+    
 
   JvTime jvt_question { jvt_s.c_str() };
   Personal_Timed_GPS_Record * ptgr_ptr = NULL;

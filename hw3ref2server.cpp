@@ -12,6 +12,7 @@
 using namespace std;
 using namespace jsonrpc;
 
+
 class myhw3ref2Server : public hw3ref2Server
 {
 public:
@@ -36,7 +37,7 @@ myhw3ref2Server::upload
 {
   Json::Value result;
   
-  std::cout << "upload" << " " << location_jv << std::endl;
+  //std::cout << "upload" << " " << location_jv << std::endl;
 
   time_t ticks; 
   ticks = time(NULL);
@@ -45,7 +46,7 @@ myhw3ref2Server::upload
   char buffer[128];
   bzero(buffer, 128);
   std::strftime(buffer, 32, "%Y-%m-%dT%H:%M:%S", my_tm_ptr);
-  printf("at %s\n", buffer);
+  //printf("at %s\n", buffer);
 
   int i;
   Json::Value *jv_ptr = (Json::Value *) NULL;
@@ -120,15 +121,15 @@ myhw3ref2Server::upload
   // dump the MAP
   for (const auto& n : hw3_TLID_map)
     {
-      std::cout << '[' << n.first << ']' << std::endl;
+      //std::cout << '[' << n.first << ']' << std::endl;
       for (i = 0; i < (n.second).size(); i++)
 	{
 	  Timed_Location x = (n.second)[i];
 	  Json::Value *jvp = x.dump2JSON();
-	  std::cout << (*jvp) << std::endl;
+	  //std::cout << (*jvp) << std::endl;
 	}
     }
-  std::cout << std::endl;
+  //std::cout << std::endl;
 
   result["status"] = "successful";
   return result;
@@ -140,7 +141,7 @@ myhw3ref2Server::question
 {
   Json::Value result;
   
-  std::cout << "question" << " " << question_jv << std::endl;
+  //std::cout << "question" << " " << question_jv << std::endl;
   std::string strJson;
 
   time_t ticks; 
@@ -150,7 +151,7 @@ myhw3ref2Server::question
   char buffer[128];
   bzero(buffer, 128);
   std::strftime(buffer, 32, "%Y-%m-%dT%H:%M:%S", my_tm_ptr);
-  printf("at %s\n", buffer);
+  //printf("at %s\n", buffer);
 
   int i;
   Json::Value *jv_ptr = (Json::Value *) NULL;
@@ -176,21 +177,21 @@ myhw3ref2Server::question
 
   JvTime jvt_question { jvt_s.c_str() };
 
-  std::cout << "hw3_TL_vector:\n";
+  //std::cout << "hw3_TL_vector:\n";
   
   id_str = question_jv["identity"].asString();
   
-  std::vector<double>time_diff_array;
+  std::vector<double> time_diff_array;
   if (hw3_TLID_map.find(id_str) != hw3_TLID_map.end())
     {
       hw3_TL_vector = (hw3_TLID_map.find(id_str))->second;
-      
+
       
       for (i = 0; i < hw3_TL_vector.size(); i++)
 	{
-	  std::cout << "array index = " << i << std::endl;
+	  //std::cout << "array index = " << i << std::endl;
 	  jv_ptr = (hw3_TL_vector[i]).dump2JSON();
-	  std::cout << *jv_ptr << std::endl;
+	  //std::cout << *jv_ptr << std::endl;
 	  delete jv_ptr;
 
 	  // t1 and t2
@@ -203,9 +204,9 @@ myhw3ref2Server::question
       
 	  double time_diff = jvt_question - ((hw3_TL_vector[i]).time);
     time_diff_array.push_back(time_diff);
-    
+
 	  //std::cout << "the difference is " << time_diff << std::endl;
-	  std::cout << std::endl;
+	  //std::cout << std::endl;
 	}
     }
   else
@@ -215,7 +216,7 @@ myhw3ref2Server::question
       return result;
     }
 
-  int answer_key;
+    int answer_key;
   if(time_diff_array[0]<0)
     {double as_latitude, as_longitude= 0.0;
       std::cout << std::fixed << std::setprecision(1);
@@ -234,14 +235,39 @@ myhw3ref2Server::question
         
       }
       double as_latitude, as_longitude;
-      //as_latitude = (hw3_TL_vector[answer_key]["GPS_DD"]["latitude"]).asDouble();
-      //as_longitude = (hw3_TL_vector[answer_key]["GPS_DD"]["longitude"]).asDouble();
-      std::cout << std::fixed << std::setprecision(1);
+      as_latitude = hw3_TL_vector[answer_key].location.getLatitude();
+      as_longitude = hw3_TL_vector[answer_key].location.getLongitude();
+      int precision = 1;
+      std::cout << std::fixed << std::setprecision(precision);
       std::cout << "{\"GPS_DD\": {\"latitude\": " << as_latitude << ", \"longitude\": " << as_longitude << "}}" << std::endl;
+      
+      // Assuming as_latitude and as_longitude are double variables
+      std::string latitude_str = std::to_string(as_latitude);
+      std::string longitude_str = std::to_string(as_longitude);
+
+      // Format latitude to have 1 decimal place
+      size_t lat_decimal_pos = latitude_str.find('.');
+      if (lat_decimal_pos != std::string::npos && lat_decimal_pos + 2 < latitude_str.length() - 1) {
+          latitude_str = latitude_str.substr(0, lat_decimal_pos + 2);
+      }
+
+      // Format longitude to have 1 decimal place
+      size_t lon_decimal_pos = longitude_str.find('.');
+      if (lon_decimal_pos != std::string::npos && lon_decimal_pos + 2 < longitude_str.length() - 1) {
+          longitude_str = longitude_str.substr(0, lon_decimal_pos + 2);
+      }
+
+      std::string status = "{\"GPS_DD\": {\"latitude\": " + latitude_str + ", \"longitude\": " + longitude_str + "}}";
+      result["status"] = status;
+
+      return result;
 }
+
   result["status"] = "successful";
   return result;
 }
+
+
 
 // 1. ecs36b_s2024_hw3ref2.json ==> two RPC functions
 // 2. follow the template of RPC (e.g., hw3client.h and hw3server.h, both generated)
@@ -259,11 +285,12 @@ main(int argc, char *argv[])
   myhw3ref2Server s(httpserver,
 		    JSONRPC_SERVER_V1V2); // hybrid server (json-rpc 1.0 & 2.0)
   s.StartListening();
+
+  
+
   std::cout << "Hit enter to stop the server" << endl;
   getchar();
 
   s.StopListening();
   return 0;
-
-  
 }

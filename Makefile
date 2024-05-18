@@ -2,9 +2,9 @@
 #
 
 CC = g++ -std=c++14
-CFLAGS = -g -I/usr/include/jsoncpp -I/opt/homebrew/include
+CFLAGS = -g -I/usr/include/jsoncpp
 
-# CFLAGS = -g -D_ECS35B_DEBUG_ -I/usr/include/jsoncpp 
+# CFLAGS = -g -D_ECS35B_DEBUG_ -I/usr/include/jsoncpp
 # CFLAGS = -g -Wall -Wstrict-prototypes
 # CFLAGS = -O3
 

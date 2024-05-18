@@ -29,7 +29,7 @@ main(int argc, char *argv[])
   // step 2: process the input
   Json::Value location_jv;
   rc = myFile2JSON(argv[1], &location_jv);
-  std::cout << location_jv << std::endl;
+  //std::cout << location_jv << std::endl;
   if (rc != 0)
     {
       std::cout << "error arg1 " << rc << std::endl;
@@ -38,7 +38,7 @@ main(int argc, char *argv[])
   
   Json::Value question_jv;
   rc = myFile2JSON(argv[2], &question_jv);
-  std::cout << question_jv << std::endl;
+  //std::cout << question_jv << std::endl;
   if (rc != 0)
     {
       std::cout << "error arg2 " << rc << std::endl;
@@ -68,7 +68,7 @@ main(int argc, char *argv[])
 	      ((location_jv["traces"][i]["time"]["time"]).isNull() != true)            &&
 	      ((location_jv["traces"][i]["time"]["time"]).isString() == true))
 	    {
-	      std::cout << "..\n";
+	      //std::cout << "..\n";
 	    }
 	  else
 	    {
@@ -76,7 +76,7 @@ main(int argc, char *argv[])
 	      return -1;
 	    }
 	}
-      std::cout << "checked\n";
+      //std::cout << "checked\n";
     }
   else
     {
@@ -92,7 +92,7 @@ main(int argc, char *argv[])
   // upload traces
   try {
     result = myClient.upload(location_jv);
-    cout << result.toStyledString() << endl;
+    //cout << result.toStyledString() << endl;
   } catch (JsonRpcException &e) {
     cerr << e.what() << endl;
   }
@@ -105,7 +105,7 @@ main(int argc, char *argv[])
       ((question_jv["time"]["time"]).isNull() != true)    &&
       ((question_jv["time"]["time"]).isString() == true))
     {
-      std::cout << "checked\n";
+      //std::cout << "checked\n";
     }
   else
     {
@@ -116,7 +116,14 @@ main(int argc, char *argv[])
   // question
   try {
     result = myClient.question(question_jv);
-    cout << result.toStyledString() << endl;
+    if (!result.empty()) {
+    // Iterate over the keys in the JSON object
+    for (const auto& key : result.getMemberNames()) {
+        // Print the value associated with the key
+        std::cout << result[key].asString() << std::endl;
+    }
+}
+    //std::cout << result.toStyledString() << endl;
   } catch (JsonRpcException &e) {
     cerr << e.what() << endl;
   }

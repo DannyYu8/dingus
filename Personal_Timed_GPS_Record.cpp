@@ -37,10 +37,11 @@ Personal_Timed_GPS_Record::question
   for (i = 0; i < this->traces.size(); i++)
     {
       double time_diff = arg_jvt - ((this->traces)[i]).time;
-      std::cout << time_diff <<endl;
+      std:cout << time_diff << endl;
       if (time_diff > 0)
 	{
 	  default_gps = ((this->traces)[i]).location;
+    
 	}
     }
 
